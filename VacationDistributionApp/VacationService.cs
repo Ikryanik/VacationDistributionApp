@@ -17,18 +17,19 @@ public static class VacationService
 
         range.StartDateTime = randomStartDay;
         range.EndDateTime = range.StartDateTime.AddDays(config.VacationStep);
-
+        
         var holidaysInVacation = ValidateCollisionWithHolidays(range, calendar);
         if (holidaysInVacation > 0)
         {
             range.EndDateTime = range.EndDateTime.AddDays(holidaysInVacation);
         }
+
+        if (config.CanBeCollision) return range;
         
-        var isOnlyVacationForPeriod = ValidateCollisionWithVacationForPeriod(range, config.BreakBetweenHolidaysInDays, dates);
+        var isOnlyVacationForPeriod =
+            ValidateCollisionWithVacationForPeriod(range, config.BreakBetweenHolidaysInDays, dates);
 
-        if (!isOnlyVacationForPeriod) return null;
-
-        return range;
+        return !isOnlyVacationForPeriod ? null : range;
     }
 
     private static bool ValidateWorkingDay(DateTime startDate, HolidaysByWorkingCalendar calendar, VacationConfig config)
@@ -60,17 +61,17 @@ public static class VacationService
         return !existStart || !existEnd;
     }
 
-    public static bool ValidateCollisionWithOtherEmployees(DateTimeRange range, List<EmployeeVacation> allVacation, VacationConfig config)
+    public static bool ValidateCollisionWithOtherEmployees(DateTimeRange range, List<EmployeeVacation> allVacation)
     {
         var isCollision = false;
         var isBreakBetweenVacationOfDifferentEmployees = false;
         foreach (var vacation in allVacation)
         {
-            isCollision = ValidateCollisionWithOtherDates(range, vacation.vacations);
+            isCollision = ValidateCollisionWithOtherDates(range, vacation.Vacations);
 
             if (isCollision) break;
 
-            isBreakBetweenVacationOfDifferentEmployees = vacation.vacations.Any(element =>
+            isBreakBetweenVacationOfDifferentEmployees = vacation.Vacations.Any(element =>
                 element.AddDays(3) >= range.StartDateTime && element.AddDays(3) <= range.EndDateTime);
         }
         

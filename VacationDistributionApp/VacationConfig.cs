@@ -3,7 +3,6 @@
 public class VacationConfig
 {
     public DateTime StartYearDay => new(DateTime.Now.Year, 1, 1);
-    public DateTime EndYearDate => new(DateTime.Now.Year, 12, 31);
     public int DaysCountOfYear => DateTime.IsLeapYear(StartYearDay.Year) ? 366 : 365;
     public int CountOfVacation { get; set; }
     public int VacationStep { get; set; }

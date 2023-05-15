@@ -2,7 +2,7 @@
 
 public class EmployeeVacation
 {
-    public Employee Employee { get; set; }
-    public List<DateTime> vacations { get; set; } = new List<DateTime>();
+    public Employee Employee { get; set; } = null!;
+    public List<DateTime> Vacations { get; set; } = new();
 }
     
